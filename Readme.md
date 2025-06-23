@@ -9,5 +9,5 @@ Software de conversão do ficheiro excel(xlsx) para ficheiro de texto em um form
 4. Sera gerado um ficheiro de texto "Final_file.txt" conforme esperado.
 
 
-PARAMAIS INFORMAÇÃO NÃO EXITA EM CONTACTAR O CRIADOR CHRISTIA 923398021
+PARAMAIS INFORMAÇÃO NÃO EXITA EM CONTACTAR O CRIADOR CHRISTIAN 923398021
 
