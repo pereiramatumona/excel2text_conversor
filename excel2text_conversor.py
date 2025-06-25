@@ -7,7 +7,7 @@ from pathlib import Path
 
 def read_excel_file(file, ano):
     try:
-        excel_data_df = pd.read_excel(file, sheet_name=ano, skiprows=5 )
+        excel_data_df = pd.read_excel(file, sheet_name=ano, skiprows=11 )
 
     except FileNotFoundError as e:
         display(ficheiro='None', aba='None', acao='Ficheiro não encontrado...')
@@ -21,14 +21,18 @@ def read_excel_file(file, ano):
 
 def create_csv_file():
 
-    with open('000100001100012.bin', 'r') as novo_csv:
+    with open('000100001100012.bin', 'r', encoding="utf-8") as novo_csv:
         for linhas in novo_csv:
-            inss = f'1{linhas.split(';')[0]:0>10}'
-            nome = linhas.split(';')[1]
-            salario_info = f'00000{linhas.split(';')[2]:0>14}{linhas.split(';')[3]:0>14}00000000'
+            if linhas.split(';')[0] != '':
+                inss = f'1{linhas.split(';')[0]:0>10}'
+                nome = linhas.split(';')[1]
+                salarios = f'00000{linhas.split(';')[2]:0>14}{linhas.split(';')[3]:0>14}00000000'
+                salario_info = ''.join(salarios.split('.'))
 
-            linha_formatada = f'{inss:10}{' ':20}{nome:70}{salario_info:41}{' ':38}'
-            salvar_formatado(linha_formatada)
+                linha_formatada = f'{inss:10}{' ':20}{nome:70}{salario_info:41}{' ':38}'
+                salvar_formatado(linha_formatada)
+            else:
+                break
 
 
 def salvar_formatado(linha_formatada):
