@@ -24,7 +24,7 @@ def create_csv_file():
     with open('000100001100012.bin', 'r', encoding="utf-8") as novo_csv:
         for linhas in novo_csv:
             if linhas.split(';')[0] != '':
-                inss = f'1{linhas.split(';')[0]:0>11}'
+                inss = f'1{linhas.split(';')[0]:0>10}'
                 nome = linhas.split(';')[1]
                 salarios = f'00000{linhas.split(';')[2]:0>15}'
                 outras_remuneracoes = f'{linhas.split(';')[3]:0>15}00000000'
@@ -35,7 +35,7 @@ def create_csv_file():
 
                 salario_info = f'{salario_}{outras_remuneracoes}'
 
-                linha_formatada = f'{inss:11}{' ':20}{nome:71}{salario_info:0<41}{' ':38}'
+                linha_formatada = f'{inss}{' ':20}{nome:71}{salario_info:0<41}{' ':38}'
                 salvar_formatado(linha_formatada)
             else:
                 break
