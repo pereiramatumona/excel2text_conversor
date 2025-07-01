@@ -5,62 +5,61 @@ from colorama import Fore, Back, Style, init
 
 from pathlib import Path
 
-def read_excel_file(file,ano, aba):
+def read_excel_file(file, aba):
     try:
         excel_data_df = pd.read_excel(file, sheet_name=aba, skiprows=10 )
-        print('FILE: ', file)
+        file_novo = file.split('.')[0]
         
     except FileNotFoundError as e:
-        display(ficheiro='None', aba='None',ano='None', acao='Ficheiro não encontrado...')
+        display(ficheiro='None', aba='None', acao='Ficheiro não encontrado...')
         print('ERRO:', e)
     except FileNotFoundError as e:
-        display(ficheiro='None', aba='None',ano='None', acao='Aba não encontrada no ficheiro...')
+        display(ficheiro='None', aba='None', acao='Aba não encontrada no ficheiro...')
     else:
         csv_format = excel_data_df.to_csv('000100001100012.bin', sep=';', index=False)
 
     
-        return (csv_format, ano, aba) 
+        return (csv_format, aba) 
 
-def create_csv_file(ano,aba):
+def create_csv_file(ficheiro, aba):
 
-    with open('000100001100012.bin', 'r+', encoding="utf-8") as novo_csv:
+    with open('000100001100012.bin', 'r+', encoding="utf-8-sig") as novo_csv:
 
         for linhas in novo_csv:
 
             if linhas.split(';')[0] != '':
-                inss = f'1{linhas.split(';')[0]:0>10}'   
+                inss = f"1{linhas.split(';')[0]:0>10}"   
                 nome = linhas.split(';')[1]
-                salarios = f'00000{linhas.split(';')[2]:0>15}'
-                outras_remuneracoes = f'{linhas.split(';')[3]:0>15}00000000'
+                salarios = f"00000{linhas.split(';')[2]:0>15}"
+                outras_remuneracoes = f"{linhas.split(';')[3]:0>15}00000000"
                 salario_= ''.join(salarios.split('.'))
                 outras_remuneracoes =''.join(outras_remuneracoes.split('.'))
-
-                #print(f'{salario_} {outras_remuneracoes}')
-
                 salario_info = f'{salario_}{outras_remuneracoes}'
-
-                linha_formatada = f'{inss}{' ':20}{nome:71}{salario_info:0<41}{' ':38}'
-                salvar_formatado(linha_formatada, ano, aba)
+                linha_formatada = f"{inss}{' '*20}{nome:71}{salario_info:0<41}{' '*38}"
+                salvar_formatado(linha_formatada,ficheiro, aba)
 
             else:
                 break
 
 
-def salvar_formatado(linha_formatada, ano, aba):
+def salvar_formatado(linha_formatada, ficheiro, aba):
 
     pasta = 'Ficheiros'
     os.makedirs(pasta,exist_ok=True)
 
-    caminho = os.path.join(pasta, f'Final_{ano}_{aba}.txt' )
+    file_novo = ficheiro.split('.')[0]
+
+    caminho = os.path.join(pasta, f'Final_{file_novo}_{aba}.txt' )
+
     with open( caminho, 'a', encoding='utf-8'  ) as novo_csv:
 
-        novo_csv.writelines(linha_formatada)
-        novo_csv.write(linha_formatada + '\n')
+        novo_csv.writelines(f'{linha_formatada}\n')
+       
    
     
     #apagar_ficcheiro()
 
-def display(ficheiro='None',ano='None', aba='None', acao='None'):
+def display(ficheiro='None', aba='None', acao='None'):
     os.system('cls')
     traco = '-'
     barra = '|'
@@ -68,8 +67,7 @@ def display(ficheiro='None',ano='None', aba='None', acao='None'):
     print( f'| {Style.BRIGHT}{"INFORMACOES DE FICHEIRO DE CONVERSÃO":^77}{Style.RESET_ALL} |')
     print(f'{traco*81}')
     print(f'|{"":^79}|')
-    print(f'|{" FICHEIRO(xxx.xlsx):":<20} {Fore.RED }{ficheiro:58}{Style.RESET_ALL}|') if ficheiro == 'None' else print(f'|{" FICHEIRO(XXX.XLSX):":<20} {Fore.GREEN}{Style.BRIGHT}{ficheiro:58}{Style.RESET_ALL}|')
-    print(f'|{" ANO:":<20} {Fore.RED }{ano:58}{Style.RESET_ALL}|') if ano == 'None' else print(f'|{" ANO:":<20} {Fore.GREEN}{Style.BRIGHT}{ano:58}{Style.RESET_ALL}|')  
+    print(f'|{" FICHEIRO(xxx.xlsx):":<20} {Fore.RED }{ficheiro:58}{Style.RESET_ALL}|') if ficheiro == 'None' else print(f'|{" FICHEIRO(XXX.XLSX):":<20} {Fore.GREEN}{Style.BRIGHT}{ficheiro:58}{Style.RESET_ALL}|')  
     print(f'|{" ABA:":<20} {Fore.RED }{aba:58}{Style.RESET_ALL}|') if aba == 'None' else print(f'|{" ABA:":<20} {Fore.GREEN}{Style.BRIGHT}{aba:58}{Style.RESET_ALL}|')  
     print(f'|{" ACÇÂO:":<20} {Fore.RED }{acao:58}{Style.RESET_ALL}|') if acao == 'None' else print(f'|{" ACÇÂO:":<20} {Fore.GREEN}{Style.BRIGHT}{acao:58}{Style.RESET_ALL}|')
     print(f'|{"":^79}|')
@@ -118,34 +116,31 @@ def interacao_user():
     ficheiro = input('Digite o nome do Ficheiro: ')
     display(ficheiro)
     
-    ano = input('Digite o ano de construçao: ')
-    display(ficheiro, ano)
-
     aba = input('Digite a ABA no Ficheiro: ')
-    display(ficheiro,ano,aba)    
+    display(ficheiro,aba)    
     
     opcao = input('Desejas converter? Y(Yes)/N(No): ') 
     match opcao:
         case 'Y':
-            display(ficheiro,ano,aba,acao='Ficheiro convertido com sucesso...')
-            read_excel_file(ficheiro,ano,aba)
-            create_csv_file(ano, aba)
+            display(ficheiro,aba,acao='Ficheiro convertido com sucesso...')
+            read_excel_file(ficheiro,aba)
+            create_csv_file(ficheiro,aba)
         case 'y': 
-            display(ficheiro,ano,aba,acao='Ficheiro convertido com sucesso...')
-            read_excel_file(ficheiro,ano,aba)
-            create_csv_file(ano, aba)
+            display(ficheiro,aba,acao='Ficheiro convertido com sucesso...')
+            read_excel_file(ficheiro,aba)
+            create_csv_file(ficheiro,aba)
         case 'Yes': 
-            display(ficheiro,ano,aba,acao='Ficheiro convertido com sucesso...')
-            read_excel_file(ficheiro,ano,aba)
-            create_csv_file(ano, aba)
+            display(ficheiro,aba,acao='Ficheiro convertido com sucesso...')
+            read_excel_file(ficheiro,aba)
+            create_csv_file( ficheiro, aba)
         case 'yes': 
-            display(ficheiro,ano,aba,acao='Ficheiro convertido com sucesso...')
-            read_excel_file(ficheiro,ano,aba)
-            create_csv_file(ano, aba)
+            display(ficheiro,aba,acao='Ficheiro convertido com sucesso...')
+            read_excel_file(ficheiro,aba)
+            create_csv_file( ficheiro, aba)
         case 'YES': 
-            display(ficheiro,ano,aba,acao='Ficheiro convertido com sucesso...')
-            read_excel_file(ficheiro,ano,aba)
-            create_csv_file(ano, aba)
+            display(ficheiro,aba,acao='Ficheiro convertido com sucesso...')
+            read_excel_file(ficheiro,aba)
+            create_csv_file(ficheiro,aba)
         case 'N':print('Sair...')
         case 'n': print('Sair...')
         case 'No': print('Sair...')
@@ -154,10 +149,7 @@ def interacao_user():
         case _: interacao_user()
     
 
-
 interacao_user()
-
-
 
 #display(ficheiro='Ficheiro_de_ano_2025.xlsx', aba='Janeiro', acao='None')
 #read_excel_file('dados.xlsx', 'Janeiro')
