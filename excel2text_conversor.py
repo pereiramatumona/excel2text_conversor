@@ -5,26 +5,30 @@ from colorama import Fore, Back, Style, init
 
 from pathlib import Path
 
-def read_excel_file(file, ano):
+def read_excel_file(file,ano, aba):
     try:
-        excel_data_df = pd.read_excel(file, sheet_name=ano, skiprows=10 )
-
+        excel_data_df = pd.read_excel(file, sheet_name=aba, skiprows=10 )
+        print('FILE: ', file)
+        
     except FileNotFoundError as e:
-        display(ficheiro='None', aba='None', acao='Ficheiro não encontrado...')
+        display(ficheiro='None', aba='None',ano='None', acao='Ficheiro não encontrado...')
         print('ERRO:', e)
     except FileNotFoundError as e:
-        display(ficheiro='None', aba='None', acao='Aba não encontrada no ficheiro...')
+        display(ficheiro='None', aba='None',ano='None', acao='Aba não encontrada no ficheiro...')
     else:
         csv_format = excel_data_df.to_csv('000100001100012.bin', sep=';', index=False)
+
     
-        return csv_format
+        return (csv_format, ano, aba) 
 
-def create_csv_file():
+def create_csv_file(ano,aba):
 
-    with open('000100001100012.bin', 'r', encoding="utf-8") as novo_csv:
+    with open('000100001100012.bin', 'r+', encoding="utf-8") as novo_csv:
+
         for linhas in novo_csv:
+
             if linhas.split(';')[0] != '':
-                inss = f'1{linhas.split(';')[0]:0>10}'
+                inss = f'1{linhas.split(';')[0]:0>10}'   
                 nome = linhas.split(';')[1]
                 salarios = f'00000{linhas.split(';')[2]:0>15}'
                 outras_remuneracoes = f'{linhas.split(';')[3]:0>15}00000000'
@@ -36,18 +40,27 @@ def create_csv_file():
                 salario_info = f'{salario_}{outras_remuneracoes}'
 
                 linha_formatada = f'{inss}{' ':20}{nome:71}{salario_info:0<41}{' ':38}'
-                salvar_formatado(linha_formatada)
+                salvar_formatado(linha_formatada, ano, aba)
+
             else:
                 break
 
 
-def salvar_formatado(linha_formatada):
-    with open('Final_file.txt', 'a') as novo_csv:
-        novo_csv.write(linha_formatada)
+def salvar_formatado(linha_formatada, ano, aba):
+
+    pasta = 'Ficheiros'
+    os.makedirs(pasta,exist_ok=True)
+
+    caminho = os.path.join(pasta, f'Final_{ano}_{aba}.txt' )
+    with open( caminho, 'a', encoding='utf-8'  ) as novo_csv:
+
+        novo_csv.writelines(linha_formatada)
+        novo_csv.write(linha_formatada + '\n')
+   
     
     #apagar_ficcheiro()
 
-def display(ficheiro='None', aba='None', acao='None'):
+def display(ficheiro='None',ano='None', aba='None', acao='None'):
     os.system('cls')
     traco = '-'
     barra = '|'
@@ -56,6 +69,7 @@ def display(ficheiro='None', aba='None', acao='None'):
     print(f'{traco*81}')
     print(f'|{"":^79}|')
     print(f'|{" FICHEIRO(xxx.xlsx):":<20} {Fore.RED }{ficheiro:58}{Style.RESET_ALL}|') if ficheiro == 'None' else print(f'|{" FICHEIRO(XXX.XLSX):":<20} {Fore.GREEN}{Style.BRIGHT}{ficheiro:58}{Style.RESET_ALL}|')
+    print(f'|{" ANO:":<20} {Fore.RED }{ano:58}{Style.RESET_ALL}|') if ano == 'None' else print(f'|{" ANO:":<20} {Fore.GREEN}{Style.BRIGHT}{ano:58}{Style.RESET_ALL}|')  
     print(f'|{" ABA:":<20} {Fore.RED }{aba:58}{Style.RESET_ALL}|') if aba == 'None' else print(f'|{" ABA:":<20} {Fore.GREEN}{Style.BRIGHT}{aba:58}{Style.RESET_ALL}|')  
     print(f'|{" ACÇÂO:":<20} {Fore.RED }{acao:58}{Style.RESET_ALL}|') if acao == 'None' else print(f'|{" ACÇÂO:":<20} {Fore.GREEN}{Style.BRIGHT}{acao:58}{Style.RESET_ALL}|')
     print(f'|{"":^79}|')
@@ -96,38 +110,42 @@ def interacao_user():
     
     ficheiro = 'None'
     aba = 'None'
+    ano = 'None'
     acao = 'None'
 
     display() 
     
     ficheiro = input('Digite o nome do Ficheiro: ')
     display(ficheiro)
+    
+    ano = input('Digite o ano de construçao: ')
+    display(ficheiro, ano)
 
     aba = input('Digite a ABA no Ficheiro: ')
-    display(ficheiro,aba)    
+    display(ficheiro,ano,aba)    
     
     opcao = input('Desejas converter? Y(Yes)/N(No): ') 
     match opcao:
         case 'Y':
-            display(ficheiro,aba,acao='Ficheiro convertido com sucesso...')
-            read_excel_file(ficheiro,aba)
-            create_csv_file()
+            display(ficheiro,ano,aba,acao='Ficheiro convertido com sucesso...')
+            read_excel_file(ficheiro,ano,aba)
+            create_csv_file(ano, aba)
         case 'y': 
-            display(ficheiro,aba,acao='Ficheiro convertido com sucesso...')
-            read_excel_file(ficheiro,aba)
-            create_csv_file()
+            display(ficheiro,ano,aba,acao='Ficheiro convertido com sucesso...')
+            read_excel_file(ficheiro,ano,aba)
+            create_csv_file(ano, aba)
         case 'Yes': 
-            display(ficheiro,aba,acao='Ficheiro convertido com sucesso...')
-            read_excel_file(ficheiro,aba)
-            create_csv_file()
+            display(ficheiro,ano,aba,acao='Ficheiro convertido com sucesso...')
+            read_excel_file(ficheiro,ano,aba)
+            create_csv_file(ano, aba)
         case 'yes': 
-            display(ficheiro,aba,acao='Ficheiro convertido com sucesso...')
-            read_excel_file(ficheiro,aba)
-            create_csv_file()
+            display(ficheiro,ano,aba,acao='Ficheiro convertido com sucesso...')
+            read_excel_file(ficheiro,ano,aba)
+            create_csv_file(ano, aba)
         case 'YES': 
-            display(ficheiro,aba,acao='Ficheiro convertido com sucesso...')
-            read_excel_file(ficheiro,aba)
-            create_csv_file()
+            display(ficheiro,ano,aba,acao='Ficheiro convertido com sucesso...')
+            read_excel_file(ficheiro,ano,aba)
+            create_csv_file(ano, aba)
         case 'N':print('Sair...')
         case 'n': print('Sair...')
         case 'No': print('Sair...')
