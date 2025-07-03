@@ -23,6 +23,8 @@ def read_excel_file(file, aba):
 
 def create_csv_file(ficheiro, aba):
 
+    dados_txt = []
+
     with open('000100001100012.bin', 'r+', encoding="utf-8-sig") as novo_csv:
 
         for linhas in novo_csv:
@@ -30,16 +32,26 @@ def create_csv_file(ficheiro, aba):
             if linhas.split(';')[0] != '':
                 inss = f"1{linhas.split(';')[0]:0>10}"   
                 nome = linhas.split(';')[1]
-                salarios = f"00000{linhas.split(';')[2]:0>15}"
-                outras_remuneracoes = f"{linhas.split(';')[3]:0>15}00000000"
-                salario_= ''.join(salarios.split('.'))
-                outras_remuneracoes =''.join(outras_remuneracoes.split('.'))
-                salario_info = f'{salario_}{outras_remuneracoes}'
+                
+                salarios = f"{linhas.split(';')[2]}"
+                outras_remuneracoes = f"{linhas.split(';')[3]}"
+
+                salario_= f"00000{''.join(salarios.split('.')):0>14}"
+                outras_remuneracoes_ = f"{''.join(outras_remuneracoes.split('.')):0>14}00000000"
+
+                salario_info = f'{salario_}{outras_remuneracoes_}'
+
+                #linha_formatada = f"{inss}{' '*20}{nome:71}|{salario_info:0<41}{' '*38}"
                 linha_formatada = f"{inss}{' '*20}{nome:71}{salario_info:0<41}{' '*38}"
+
+                #dados_txt.append(linha_formatada)
+
                 salvar_formatado(linha_formatada,ficheiro, aba)
 
             else:
                 break
+
+        #salvar_formatado(linha_formatada, ficheiro, aba, dados_txt)
 
 
 def salvar_formatado(linha_formatada, ficheiro, aba):
@@ -48,6 +60,7 @@ def salvar_formatado(linha_formatada, ficheiro, aba):
     os.makedirs(pasta,exist_ok=True)
 
     file_novo = ficheiro.split('.')[0]
+    #print(dados_txt)
 
     caminho = os.path.join(pasta, f'Final_{file_novo}_{aba}.txt' )
 
@@ -56,8 +69,6 @@ def salvar_formatado(linha_formatada, ficheiro, aba):
         novo_csv.writelines(f'{linha_formatada}\n')
        
    
-    
-    #apagar_ficcheiro()
 
 def display(ficheiro='None', aba='None', acao='None'):
     os.system('cls')
@@ -83,13 +94,13 @@ def display(ficheiro='None', aba='None', acao='None'):
 def apagar_ficcheiro():
     # Usando os.remove()
     try:
-        os.remove("new_csv_file.txt")
+        os.remove("000100001100012.bin")
         print("Ficheiro apagado com sucesso.")
     except OSError as e:
         print(f"Erro ao apagar ficheiro: {e}")
 
     # Usando pathlib.Path.unlink()
-    caminho_ficheiro = Path("new_csv_file.txt")
+    caminho_ficheiro = Path("000100001100012.bin")
     try:
         caminho_ficheiro.unlink()
         print("Ficheiro apagado com sucesso.")
@@ -99,7 +110,7 @@ def apagar_ficcheiro():
         print(f"Erro ao apagar ficheiro: {e}")
 
     # Usando pathlib.Path.unlink() com missing_ok=True
-    caminho_ficheiro = Path("new_csv_file.txt")
+    caminho_ficheiro = Path("000100001100012.bin")
     caminho_ficheiro.unlink(missing_ok=True)
     print("Ficheiro apagado com sucesso (se existir).")
 
@@ -108,7 +119,6 @@ def interacao_user():
     
     ficheiro = 'None'
     aba = 'None'
-    ano = 'None'
     acao = 'None'
 
     display() 
@@ -125,22 +135,27 @@ def interacao_user():
             display(ficheiro,aba,acao='Ficheiro convertido com sucesso...')
             read_excel_file(ficheiro,aba)
             create_csv_file(ficheiro,aba)
+            apagar_ficcheiro()
         case 'y': 
             display(ficheiro,aba,acao='Ficheiro convertido com sucesso...')
             read_excel_file(ficheiro,aba)
             create_csv_file(ficheiro,aba)
+            apagar_ficcheiro()
         case 'Yes': 
             display(ficheiro,aba,acao='Ficheiro convertido com sucesso...')
             read_excel_file(ficheiro,aba)
             create_csv_file( ficheiro, aba)
+            apagar_ficcheiro()
         case 'yes': 
             display(ficheiro,aba,acao='Ficheiro convertido com sucesso...')
             read_excel_file(ficheiro,aba)
             create_csv_file( ficheiro, aba)
+            apagar_ficcheiro()
         case 'YES': 
             display(ficheiro,aba,acao='Ficheiro convertido com sucesso...')
             read_excel_file(ficheiro,aba)
             create_csv_file(ficheiro,aba)
+
         case 'N':print('Sair...')
         case 'n': print('Sair...')
         case 'No': print('Sair...')
