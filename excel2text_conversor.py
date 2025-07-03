@@ -42,7 +42,7 @@ def create_csv_file(ficheiro, aba):
                 salario_info = f'{salario_}{outras_remuneracoes_}'
 
                 #linha_formatada = f"{inss}{' '*20}{nome:71}|{salario_info:0<41}{' '*38}"
-                linha_formatada = f"{inss}{' '*20}{nome:71}{salario_info:0<41}{' '*38}"
+                linha_formatada = f"{inss}{' '*20}{nome:71}{salario_info:0<41}{' '*37}"
 
                 #dados_txt.append(linha_formatada)
 
